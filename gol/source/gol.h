@@ -7,19 +7,19 @@
 #define GOL_CELL_ALIVE	1
 
 typedef struct gol_t {
-	u8* back_buf;
-	u8* front_buf;
-	u8* life_buf;
+    u8* back_buf;
+    u8* front_buf;
+    u8* life_buf;
 
-	u32 grid_width;
-	u32 grid_height;
-	u32 grid_sz;
+    u32 grid_width;
+    u32 grid_height;
+    u32 grid_sz;
 
-	u32 cell_size;
+    u32 cell_size;
     u32 cell_alive_color;
     u32 cell_dead_color;
 
-	bool stopped;
+    bool stopped;
 } gol_t;
 
 

@@ -12,65 +12,65 @@
 
 int main(int argc, char **argv)
 {
-	srand(time(0));
+    srand(time(0));
 
-	u32 *framebuf = NULL;
-	u32 width, height;
-	gol_t* game = NULL;
+    u32 *framebuf = NULL;
+    u32 width, height;
+    gol_t* game = NULL;
 
-	gfxInitDefault();
+    gfxInitDefault();
 
-	framebuf = (u32*) gfxGetFramebuffer((u32*)&width, (u32*)&height);
+    framebuf = (u32*) gfxGetFramebuffer((u32*)&width, (u32*)&height);
 
-	// Initialize game
-	game = gol_init((u32)(width / CELL_SIZE), (u32)(height / CELL_SIZE), CELL_SIZE, INITIAL_CHANCE, ALIVE_COLOR);
+    // Initialize game
+    game = gol_init((u32)(width / CELL_SIZE), (u32)(height / CELL_SIZE), CELL_SIZE, INITIAL_CHANCE, ALIVE_COLOR);
 
-	while(appletMainLoop())
-	{
-		hidScanInput();
+    while(appletMainLoop())
+    {
+        hidScanInput();
 
-		u32 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
+        u32 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
 
-		if (kDown & KEY_PLUS)
-			break;
+        if (kDown & KEY_PLUS)
+            break;
 
-		// Step game
-		for (u32 i = 0; i < TICKS_PER_FRAME; ++i) {
+        // Step game
+        for (u32 i = 0; i < TICKS_PER_FRAME; ++i) {
             gol_tick(game);
         }
 
-		// Render game
+        // Render game
         gol_render(game, framebuf, width);
 
-		gfxFlushBuffers();
-		gfxSwapBuffers();
-		gfxWaitForVsync();
+        gfxFlushBuffers();
+        gfxSwapBuffers();
+        gfxWaitForVsync();
 
-		// Detect touch and paint screen where screen is touched.
-		touchPosition touch;
-		u32 touch_count = hidTouchCount();
-		for (u32 i = 0; i < touch_count; ++i) {
-			hidTouchRead(&touch, i);
+        // Detect touch and paint screen where screen is touched.
+        touchPosition touch;
+        u32 touch_count = hidTouchCount();
+        for (u32 i = 0; i < touch_count; ++i) {
+            hidTouchRead(&touch, i);
 
-			u32 cell_idx = gol_screenpos_to_cell(game, touch.px, touch.py);
-			gol_make_cell_alive(game, cell_idx);
-		}
+            u32 cell_idx = gol_screenpos_to_cell(game, touch.px, touch.py);
+            gol_make_cell_alive(game, cell_idx);
+        }
 
-		// Randomize screen when pressing A
-		if (kDown & KEY_A)
-			gol_randomize(game, INITIAL_CHANCE);
+        // Randomize screen when pressing A
+        if (kDown & KEY_A)
+            gol_randomize(game, INITIAL_CHANCE);
 
-		// Pause game when pressing L
-		if (kDown & KEY_L)
-			gol_pause(game);
+        // Pause game when pressing L
+        if (kDown & KEY_L)
+            gol_pause(game);
 
-		// Resume game when pressing R
-		if (kDown & KEY_R)
-			gol_resume(game);
-	}
+        // Resume game when pressing R
+        if (kDown & KEY_R)
+            gol_resume(game);
+    }
 
-	gol_shutdown(game);
+    gol_shutdown(game);
 
-	gfxExit();
-	return 0;
+    gfxExit();
+    return 0;
 }

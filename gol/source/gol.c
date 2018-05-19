@@ -12,24 +12,24 @@ u32 mod_u32(u32 a, u32 b) {
 }
 
 u8 checked_sub(u8 a, u8 amount) {
-	return amount > a ? 0 : a - amount;
+    return amount > a ? 0 : a - amount;
 }
 
 u32 darken_color(u32 color, u8 amount) {
-	u8 r = (color & 0x000000ff);
-	u8 g = (color & 0x0000ff00) >> 8;
-	u8 b = (color & 0x00ff0000) >> 16;
-	u8 a = (color & 0xff000000) >> 24;
+    u8 r = (color & 0x000000ff);
+    u8 g = (color & 0x0000ff00) >> 8;
+    u8 b = (color & 0x00ff0000) >> 16;
+    u8 a = (color & 0xff000000) >> 24;
 
-	r = checked_sub(r, amount);
-	g = checked_sub(g, amount);
-	b = checked_sub(a, amount);
+    r = checked_sub(r, amount);
+    g = checked_sub(g, amount);
+    b = checked_sub(a, amount);
 
-	return RGBA8(r, g, b, a);
+    return RGBA8(r, g, b, a);
 }
 
 void gol_fn_swap_buf(gol_t* game) {
-	memcpy(game->front_buf, game->back_buf, game->grid_sz * sizeof(u8));
+    memcpy(game->front_buf, game->back_buf, game->grid_sz * sizeof(u8));
 }
 
 u32 gol_fn_is_alive(gol_t* game, u32 cell_idx) {
@@ -40,12 +40,12 @@ u32 gol_fn_is_alive(gol_t* game, u32 cell_idx) {
 }
 
 u32 gol_fn_get_status_color(gol_t* game, u8 status) {
-	switch (status) {
-		case GOL_CELL_ALIVE:
-			return game->cell_alive_color;
-		default:
-			return game->cell_dead_color;
-	}
+    switch (status) {
+        case GOL_CELL_ALIVE:
+            return game->cell_alive_color;
+        default:
+            return game->cell_dead_color;
+    }
 }
 
 u8 gol_fn_count_neighbors(gol_t* game, u32 cell_idx) {
@@ -66,112 +66,112 @@ u8 gol_fn_count_neighbors(gol_t* game, u32 cell_idx) {
 }
 
 u32 gol_screenpos_to_cell(gol_t* game, u32 pos_x, u32 pos_y) {
-	u32 cell_x = (u32)(pos_x / game->cell_size);
-	u32 cell_y = (u32)(pos_y / game->cell_size);
+    u32 cell_x = (u32)(pos_x / game->cell_size);
+    u32 cell_y = (u32)(pos_y / game->cell_size);
 
-	return cell_x + cell_y * game->grid_width;
+    return cell_x + cell_y * game->grid_width;
 }
 
 void gol_fn_render_cell(gol_t* game, u32 cell_idx, u32* render_buf, u32 render_width) {
     u32 cell_x = cell_idx % game->grid_width;
     u32 cell_y = (u32)(cell_idx / game->grid_width);
-	u32 cursor = (cell_x * game->cell_size) + (cell_y * game->cell_size * render_width);
+    u32 cursor = (cell_x * game->cell_size) + (cell_y * game->cell_size * render_width);
 
-	u8 status = game->back_buf[cell_idx];
-	u8 life = game->life_buf[cell_idx];
-	u32 color = gol_fn_get_status_color(game, status);
+    u8 status = game->back_buf[cell_idx];
+    u8 life = game->life_buf[cell_idx];
+    u32 color = gol_fn_get_status_color(game, status);
 
-	if (status == GOL_CELL_ALIVE) {
-		color = darken_color(color, life);
-	}
+    if (status == GOL_CELL_ALIVE) {
+        color = darken_color(color, life);
+    }
 
-	for (u32 l = 0; l < game->cell_size; ++l) {
-		for (u32 m = 0; m < game->cell_size; ++m) {
-			render_buf[cursor + l + (m * render_width)] = color;
-		}
-	}
+    for (u32 l = 0; l < game->cell_size; ++l) {
+        for (u32 m = 0; m < game->cell_size; ++m) {
+            render_buf[cursor + l + (m * render_width)] = color;
+        }
+    }
 }
 
 void gol_make_cell_alive(gol_t* game, u32 cell_idx) {
-	game->back_buf[cell_idx] = GOL_CELL_ALIVE;
+    game->back_buf[cell_idx] = GOL_CELL_ALIVE;
 }
 
 void gol_pause(gol_t* game) {
-	game->stopped = true;
+    game->stopped = true;
 }
 
 void gol_resume(gol_t* game) {
-	game->stopped = false;
+    game->stopped = false;
 }
 
 gol_t* gol_init(u32 grid_width, u32 grid_height, u32 cell_size, u32 initial_chance, u32 alive_color) {
-	gol_t* game = (gol_t*) malloc(sizeof(gol_t));
-	u32 sz = grid_width * grid_height;
+    gol_t* game = (gol_t*) malloc(sizeof(gol_t));
+    u32 sz = grid_width * grid_height;
 
-	game->grid_width = grid_width;
-	game->grid_height = grid_height;
-	game->grid_sz = grid_width * grid_height;
+    game->grid_width = grid_width;
+    game->grid_height = grid_height;
+    game->grid_sz = grid_width * grid_height;
 
-	game->cell_size = cell_size;
+    game->cell_size = cell_size;
     game->cell_alive_color = alive_color;
     game->cell_dead_color = RGBA8_MAXALPHA(0, 0, 0);
 
-	game->back_buf = (u8*) malloc(sizeof(u8) * sz);
-	game->front_buf = (u8*) malloc(sizeof(u8) * sz);
-	game->life_buf = (u8*) malloc(sizeof(u8) * sz);
-	
-	// Clear life buffer
-	memset(game->life_buf, 0, sz * sizeof(u8));
+    game->back_buf = (u8*) malloc(sizeof(u8) * sz);
+    game->front_buf = (u8*) malloc(sizeof(u8) * sz);
+    game->life_buf = (u8*) malloc(sizeof(u8) * sz);
+    
+    // Clear life buffer
+    memset(game->life_buf, 0, sz * sizeof(u8));
 
-	gol_randomize(game, initial_chance);
-	gol_fn_swap_buf(game);
+    gol_randomize(game, initial_chance);
+    gol_fn_swap_buf(game);
 
-	return game;
+    return game;
 }
 
 void gol_randomize(gol_t* game, u8 chance) {
-	for (u32 i = 0; i < game->grid_sz; ++i) {
-		game->back_buf[i] = (rand() % GOL_MAX_CHANCE) < chance ? GOL_CELL_ALIVE : GOL_CELL_DEAD;
-	}
+    for (u32 i = 0; i < game->grid_sz; ++i) {
+        game->back_buf[i] = (rand() % GOL_MAX_CHANCE) < chance ? GOL_CELL_ALIVE : GOL_CELL_DEAD;
+    }
 }
 
 void gol_tick(gol_t* game) {
-	if (game->stopped == 1)
-		return;
+    if (game->stopped == 1)
+        return;
 
     for (u32 idx = 0; idx < game->grid_sz; ++idx) {
         u8 neighbors = gol_fn_count_neighbors(game, idx);
-		u8 old_state = game->back_buf[idx];
-		u8 new_state = old_state;
+        u8 old_state = game->back_buf[idx];
+        u8 new_state = old_state;
 
         if (neighbors == 3) {
             new_state = GOL_CELL_ALIVE;
         } else if (neighbors < 2 || neighbors > 3) {
-			new_state = GOL_CELL_DEAD;
+            new_state = GOL_CELL_DEAD;
         }
 
-		if (new_state != old_state) {
-			game->back_buf[idx] = new_state;
-			game->life_buf[idx] = 0;
-		} else {
-			u8 old_life = game->life_buf[idx];
-			u8 new_life = old_life + 1 > GOL_MAX_LIFE ? GOL_MAX_LIFE : old_life + 1;
-			game->life_buf[idx] = new_life;
-		}
+        if (new_state != old_state) {
+            game->back_buf[idx] = new_state;
+            game->life_buf[idx] = 0;
+        } else {
+            u8 old_life = game->life_buf[idx];
+            u8 new_life = old_life + 1 > GOL_MAX_LIFE ? GOL_MAX_LIFE : old_life + 1;
+            game->life_buf[idx] = new_life;
+        }
     }
 
-	gol_fn_swap_buf(game);
+    gol_fn_swap_buf(game);
 }
 
 void gol_render(gol_t* game, u32* render_buf, u32 render_width) {
-	for (u32 idx = 0; idx < game->grid_sz; ++idx) {
-		gol_fn_render_cell(game, idx, render_buf, render_width);
-	}
+    for (u32 idx = 0; idx < game->grid_sz; ++idx) {
+        gol_fn_render_cell(game, idx, render_buf, render_width);
+    }
 }
 
 void gol_shutdown(gol_t* game) {
-	free(game->back_buf);
-	free(game->front_buf);
+    free(game->back_buf);
+    free(game->front_buf);
 
-	free(game);
+    free(game);
 }
