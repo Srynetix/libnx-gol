@@ -51,9 +51,7 @@ int main(int argc, char **argv)
         u32 touch_count = hidTouchCount();
         for (u32 i = 0; i < touch_count; ++i) {
             hidTouchRead(&touch, i);
-
-            u32 cell_idx = gol_screenpos_to_cell(game, touch.px, touch.py);
-            gol_make_cell_alive(game, cell_idx);
+            gol_revive_cells_at_position(game, touch.px, touch.py, 30, 30);
         }
 
         // Randomize screen when pressing A

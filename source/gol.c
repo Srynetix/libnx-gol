@@ -11,7 +11,7 @@ u32 mod_u32(u32 a, u32 b) {
     return (a % b + b) % b;
 }
 
-u8 checked_sub(u8 a, u8 amount) {
+u8 checked_sub_u8(u8 a, u8 amount) {
     return amount > a ? 0 : a - amount;
 }
 
@@ -21,9 +21,9 @@ u32 darken_color(u32 color, u8 amount) {
     u8 b = (color & 0x00ff0000) >> 16;
     u8 a = (color & 0xff000000) >> 24;
 
-    r = checked_sub(r, amount);
-    g = checked_sub(g, amount);
-    b = checked_sub(a, amount);
+    r = checked_sub_u8(r, amount);
+    g = checked_sub_u8(g, amount);
+    b = checked_sub_u8(a, amount);
 
     return RGBA8(r, g, b, a);
 }
@@ -65,7 +65,7 @@ u8 gol_fn_count_neighbors(gol_t* game, u32 cell_idx) {
     return count;
 }
 
-u32 gol_screenpos_to_cell(gol_t* game, u32 pos_x, u32 pos_y) {
+u32 gol_fn_screenpos_to_cell(gol_t* game, u32 pos_x, u32 pos_y) {
     u32 cell_x = (u32)(pos_x / game->cell_size);
     u32 cell_y = (u32)(pos_y / game->cell_size);
 
@@ -92,8 +92,28 @@ void gol_fn_render_cell(gol_t* game, u32 cell_idx, u32* render_buf, u32 render_w
     }
 }
 
-void gol_make_cell_alive(gol_t* game, u32 cell_idx) {
+void gol_fn_revive_cell(gol_t* game, u32 cell_idx) {
     game->back_buf[cell_idx] = GOL_CELL_ALIVE;
+    game->life_buf[cell_idx] = 0;
+}
+
+void gol_revive_cells_at_position(gol_t* game, u32 pos_x, u32 pos_y, u32 diam_x, u32 diam_y) {
+    u32 cell_idx = gol_fn_screenpos_to_cell(game, pos_x, pos_y);
+    gol_fn_revive_cell(game, cell_idx);
+
+    u32 radius_x = (u32)(diam_x / 2);
+    u32 radius_y = (u32)(diam_y / 2);
+
+    // Draw circle
+    for (s32 y = -radius_y; y <= radius_y; ++y) {
+        for (s32 x = -radius_x; x <= radius_x; ++x) {
+            u32 curr_x = pos_x + x;
+            u32 curr_y = pos_y + y;
+
+            u32 curr_cell_idx = gol_fn_screenpos_to_cell(game, curr_x, curr_y);
+            gol_fn_revive_cell(game, curr_cell_idx);
+        }
+    }
 }
 
 void gol_pause(gol_t* game) {
@@ -119,6 +139,8 @@ gol_t* gol_init(u32 grid_width, u32 grid_height, u32 cell_size, u32 initial_chan
     game->back_buf = (u8*) malloc(sizeof(u8) * sz);
     game->front_buf = (u8*) malloc(sizeof(u8) * sz);
     game->life_buf = (u8*) malloc(sizeof(u8) * sz);
+
+    game->stopped = false;
     
     // Clear life buffer
     memset(game->life_buf, 0, sz * sizeof(u8));
