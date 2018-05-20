@@ -1,7 +1,7 @@
 #ifndef GOL_H
 #define GOL_H
 
-#include <switch.h>
+#include "types.h"
 
 #define GOL_CELL_DEAD	0
 #define GOL_CELL_ALIVE	1
@@ -32,7 +32,7 @@ typedef struct gol_t {
     u32 cell_dead_color;
 
     /// Is the game stopped?
-    bool stopped;
+    BOOL stopped;
 } gol_t;
 
 
@@ -105,5 +105,12 @@ void gol_tick(gol_t* game);
  * @param render_width  Render width
  */
 void gol_render(gol_t* game, u32* render_buf, u32 render_width);
+
+/**
+ * Swap buffers.
+ * 
+ * @param game  Game
+ */
+void gol_swap_buffers(gol_t* game);
 
 #endif // GOL_H

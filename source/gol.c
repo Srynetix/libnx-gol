@@ -28,7 +28,7 @@ u32 darken_color(u32 color, u8 amount) {
     return RGBA8(r, g, b, a);
 }
 
-void gol_fn_swap_buf(gol_t* game) {
+void gol_swap_buffers(gol_t* game) {
     memcpy(game->front_buf, game->back_buf, game->grid_sz * sizeof(u8));
 }
 
@@ -101,27 +101,29 @@ void gol_revive_cells_at_position(gol_t* game, u32 pos_x, u32 pos_y, u32 diam_x,
     u32 cell_idx = gol_fn_screenpos_to_cell(game, pos_x, pos_y);
     gol_fn_revive_cell(game, cell_idx);
 
-    u32 radius_x = (u32)(diam_x / 2);
-    u32 radius_y = (u32)(diam_y / 2);
+    s32 radius_x = (s32)(diam_x / 2);
+    s32 radius_y = (s32)(diam_y / 2);
 
     // Draw circle
     for (s32 y = -radius_y; y <= radius_y; ++y) {
         for (s32 x = -radius_x; x <= radius_x; ++x) {
-            u32 curr_x = pos_x + x;
-            u32 curr_y = pos_y + y;
+            if (x * x + y * y <= radius_x * radius_y) {
+                u32 curr_x = pos_x + x;
+                u32 curr_y = pos_y + y;
 
-            u32 curr_cell_idx = gol_fn_screenpos_to_cell(game, curr_x, curr_y);
-            gol_fn_revive_cell(game, curr_cell_idx);
+                u32 curr_cell_idx = gol_fn_screenpos_to_cell(game, curr_x, curr_y);
+                gol_fn_revive_cell(game, curr_cell_idx);
+            }
         }
     }
 }
 
 void gol_pause(gol_t* game) {
-    game->stopped = true;
+    game->stopped = TRUE;
 }
 
 void gol_resume(gol_t* game) {
-    game->stopped = false;
+    game->stopped = FALSE;
 }
 
 gol_t* gol_init(u32 grid_width, u32 grid_height, u32 cell_size, u32 initial_chance, u32 alive_color) {
@@ -140,13 +142,13 @@ gol_t* gol_init(u32 grid_width, u32 grid_height, u32 cell_size, u32 initial_chan
     game->front_buf = (u8*) malloc(sizeof(u8) * sz);
     game->life_buf = (u8*) malloc(sizeof(u8) * sz);
 
-    game->stopped = false;
+    game->stopped = FALSE;
     
     // Clear life buffer
     memset(game->life_buf, 0, sz * sizeof(u8));
 
     gol_randomize(game, initial_chance);
-    gol_fn_swap_buf(game);
+    gol_swap_buffers(game);
 
     return game;
 }
@@ -154,11 +156,12 @@ gol_t* gol_init(u32 grid_width, u32 grid_height, u32 cell_size, u32 initial_chan
 void gol_randomize(gol_t* game, u8 chance) {
     for (u32 i = 0; i < game->grid_sz; ++i) {
         game->back_buf[i] = (rand() % GOL_MAX_CHANCE) < chance ? GOL_CELL_ALIVE : GOL_CELL_DEAD;
+        game->life_buf[i] = 0;
     }
 }
 
 void gol_tick(gol_t* game) {
-    if (game->stopped == 1)
+    if (game->stopped == TRUE)
         return;
 
     for (u32 idx = 0; idx < game->grid_sz; ++idx) {
@@ -182,7 +185,7 @@ void gol_tick(gol_t* game) {
         }
     }
 
-    gol_fn_swap_buf(game);
+    gol_swap_buffers(game);
 }
 
 void gol_render(gol_t* game, u32* render_buf, u32 render_width) {
