@@ -53,7 +53,10 @@ u32 gol_fn_screenpos_to_cell(gol_t* game, u32 pos_x, u32 pos_y) {
     return cell_x + cell_y * game->grid_width;
 }
 
-void gol_fn_render_cell(gol_t* game, u32 cell_idx, u32* render_buf, u32 render_width) {
+void gol_fn_render_cell(gol_t* game, u32 cell_idx, renderer_t* renderer) {
+    u32* render_buf = renderer->framebuffer;
+    u32 render_width = renderer->width;
+
     u32 cell_x = cell_idx % game->grid_width;
     u32 cell_y = (u32)(cell_idx / game->grid_width);
     u32 cursor = (cell_x * game->cell_size) + (cell_y * game->cell_size * render_width);
@@ -169,9 +172,9 @@ void gol_tick(gol_t* game) {
     gol_swap_buffers(game);
 }
 
-void gol_render(gol_t* game, u32* render_buf, u32 render_width) {
+void gol_render(gol_t* game, renderer_t* renderer) {
     for (u32 idx = 0; idx < game->grid_sz; ++idx) {
-        gol_fn_render_cell(game, idx, render_buf, render_width);
+        gol_fn_render_cell(game, idx, renderer);
     }
 }
 

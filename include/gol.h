@@ -2,6 +2,7 @@
 #define GOL_H
 
 #include "types.h"
+#include "renderer.h"
 
 #define GOL_CELL_DEAD	0
 #define GOL_CELL_ALIVE	1
@@ -101,10 +102,9 @@ void gol_tick(gol_t* game);
  * Render the game in a render buffer.
  * 
  * @param game          Game
- * @param render_buf    Render buffer
- * @param render_width  Render width
+ * @param renderer      Renderer
  */
-void gol_render(gol_t* game, u32* render_buf, u32 render_width);
+void gol_render(gol_t* game, renderer_t* renderer);
 
 /**
  * Swap buffers.

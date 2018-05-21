@@ -4,6 +4,7 @@
 #include "gol.h"
 #include "renderer.h"
 #include "color.h"
+#include "font.h"
 
 #ifndef SWITCH
 #include <SDL2/SDL.h>
@@ -19,9 +20,8 @@ int main(int argc, char **argv)
 {
     srand(time(0));
 
-    u32* framebuf;
-    u32 width, height;
     u32 ticks_per_frame = INITIAL_TICKS_PER_FRAME;
+    renderer_t* renderer = NULL;
     gol_t* game = NULL;
 
 #ifndef SWITCH
@@ -29,15 +29,12 @@ int main(int argc, char **argv)
 #endif
 
     // Initialize renderer
-    renderer_init();
-
-    // Get framebuffer
-    framebuf = renderer_get_framebuffer(&width, &height);
+    renderer = renderer_init();
 
     // Initialize game
-    game = gol_init((u32)(width / CELL_SIZE), (u32)(height / CELL_SIZE), CELL_SIZE, INITIAL_CHANCE, ALIVE_COLOR);
+    game = gol_init((u32)(renderer->width / CELL_SIZE), (u32)(renderer->height / CELL_SIZE), CELL_SIZE, INITIAL_CHANCE, ALIVE_COLOR);
 
-    while (renderer_is_running()) {
+    while (renderer_is_running(renderer)) {
 #ifdef SWITCH
         hidScanInput();
 
@@ -45,7 +42,7 @@ int main(int argc, char **argv)
         u32 kUp = hidKeysUp(CONTROLLER_P1_AUTO);
 
         if (kDown & KEY_PLUS)
-            break;
+            renderer_stop();
 
         // Detect touch and paint screen where screen is touched.
         touchPosition touch;
@@ -92,7 +89,7 @@ int main(int argc, char **argv)
 
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)) {
-                renderer_stop();
+                renderer_stop(renderer);
             }
 
             // Detect touch
@@ -153,15 +150,18 @@ int main(int argc, char **argv)
         }
 
         // Render game
-        gol_render(game, framebuf, width);
+        gol_render(game, renderer);
+
+        // Draw text
+        font_render("ABCDEABCDE", renderer, 2, 32, 32, RGBA8_MAXALPHA(100, 100, 0));
 
         // Render
-        renderer_render();
+        renderer_render(renderer);
     }
 
     gol_shutdown(game);
 
-    renderer_shutdown();
+    renderer_shutdown(renderer);
 
     return 0;
 }

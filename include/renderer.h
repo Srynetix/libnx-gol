@@ -3,13 +3,21 @@
 
 #include "types.h"
 
-void renderer_init();
+typedef struct renderer_t {
+    u32* framebuffer;
 
-u32* renderer_get_framebuffer(u32* out_width, u32* out_height);
-u32 renderer_is_running();
-void renderer_stop();
+    u32 width;
+    u32 height;
 
-void renderer_render();
-void renderer_shutdown();
+    bool running;
+} renderer_t;
+
+renderer_t* renderer_init();
+
+u32 renderer_is_running(renderer_t* renderer);
+void renderer_stop(renderer_t* renderer);
+
+void renderer_render(renderer_t* renderer);
+void renderer_shutdown(renderer_t* renderer);
 
 #endif // GOL_RENDERER_H
