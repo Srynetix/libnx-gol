@@ -1,5 +1,7 @@
 # Game of Life for Nintendo Switch (using libnx)
 
+![screenshot](assets/gol.png "Game of Life")
+
 ## Build for Switch w/ Docker
 
 ```bash
