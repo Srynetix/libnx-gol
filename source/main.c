@@ -42,7 +42,7 @@ int main(int argc, char **argv)
         u32 kUp = hidKeysUp(CONTROLLER_P1_AUTO);
 
         if (kDown & KEY_PLUS)
-            renderer_stop();
+            renderer_stop(renderer);
 
         // Detect touch and paint screen where screen is touched.
         touchPosition touch;
@@ -153,7 +153,10 @@ int main(int argc, char **argv)
         gol_render(game, renderer);
 
         // Draw text
-        font_render("ABCDEABCDE", renderer, 2, 32, 32, RGBA8_MAXALPHA(100, 100, 0));
+        font_render("ABCD ABCD", renderer, 1, 32, 32, RGBA8_MAXALPHA(50, 100, 0));
+        font_render("ABCD ABCD", renderer, 2, 64, 64, RGBA8_MAXALPHA(100, 50, 0));
+        font_render("ABCD ABCD", renderer, 3, 96, 96, RGBA8_MAXALPHA(100, 100, 0));
+        font_render("ABCD ABCD", renderer, 4, 128, 128, RGBA8_MAXALPHA(50, 100, 50));
 
         // Render
         renderer_render(renderer);

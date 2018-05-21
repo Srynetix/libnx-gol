@@ -1,9 +1,11 @@
 #ifdef SWITCH
 
+#include <stdlib.h>
+
 #include "renderer.h"
 
 renderer_t* renderer_init() {
-    renderer_t renderer = (renderer_t*) malloc(sizeof(renderer_t));
+    renderer_t* renderer = (renderer_t*) malloc(sizeof(renderer_t));
 
     renderer->running = true;
     gfxInitDefault();

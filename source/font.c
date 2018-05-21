@@ -11,7 +11,7 @@ const s32 FONT[] = {
     0x0e949d27, // B
     0x0c908526, // C
     0x0e94a527, // D
-    0x0f085e17  // E
+    0x0085e170  // E
 };
 
 u32 font_fn_get_char_data_idx(char c) {
@@ -51,8 +51,6 @@ void font_fn_render_char(char c, renderer_t* renderer, u32 font_size, u32 pos_x,
             u8 pxl = (data >> k) & 1;
             if (pxl == 1) {
                 buf[cell_idx] = color;
-            } else {
-                buf[cell_idx] = 0x00000000;
             }
         }
     }
