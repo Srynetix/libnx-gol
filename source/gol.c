@@ -3,30 +3,11 @@
 #include <string.h>
 
 #include "gol.h"
+#include "utils.h"
+#include "color.h"
 
 #define GOL_MAX_CHANCE	100
 #define GOL_MAX_LIFE	200
-
-u32 mod_u32(u32 a, u32 b) {
-    return (a % b + b) % b;
-}
-
-u8 checked_sub_u8(u8 a, u8 amount) {
-    return amount > a ? 0 : a - amount;
-}
-
-u32 darken_color(u32 color, u8 amount) {
-    u8 r = (color & 0x000000ff);
-    u8 g = (color & 0x0000ff00) >> 8;
-    u8 b = (color & 0x00ff0000) >> 16;
-    u8 a = (color & 0xff000000) >> 24;
-
-    r = checked_sub_u8(r, amount);
-    g = checked_sub_u8(g, amount);
-    b = checked_sub_u8(a, amount);
-
-    return RGBA8(r, g, b, a);
-}
 
 void gol_swap_buffers(gol_t* game) {
     memcpy(game->front_buf, game->back_buf, game->grid_sz * sizeof(u8));
@@ -66,8 +47,8 @@ u8 gol_fn_count_neighbors(gol_t* game, u32 cell_idx) {
 }
 
 u32 gol_fn_screenpos_to_cell(gol_t* game, u32 pos_x, u32 pos_y) {
-    u32 cell_x = (u32)(pos_x / game->cell_size);
-    u32 cell_y = (u32)(pos_y / game->cell_size);
+    u32 cell_x = clamp_u32((u32)(pos_x / game->cell_size), 0, game->grid_width);
+    u32 cell_y = clamp_u32((u32)(pos_y / game->cell_size), 0, game->grid_height);
 
     return cell_x + cell_y * game->grid_width;
 }
@@ -82,7 +63,7 @@ void gol_fn_render_cell(gol_t* game, u32 cell_idx, u32* render_buf, u32 render_w
     u32 color = gol_fn_get_status_color(game, status);
 
     if (status == GOL_CELL_ALIVE) {
-        color = darken_color(color, life);
+        color = color_darken_packed(color, life);
     }
 
     for (u32 l = 0; l < game->cell_size; ++l) {

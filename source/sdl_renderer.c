@@ -1,36 +1,38 @@
 #ifndef SWITCH
 
+#include <SDL2/SDL.h>
+
 #include "renderer.h"
 
-u32 renderer_width;
-u32 renderer_height;
+static u32 g_renderer_width;
+static u32 g_renderer_height;
 
-u32* g_framebuffer;
-bool g_running;
+static u32* g_framebuffer;
+static bool g_running;
 
-SDL_Window* g_window;
-SDL_Renderer* g_renderer;
-SDL_Texture* g_texture;
+static SDL_Window* g_window;
+static SDL_Renderer* g_renderer;
+static SDL_Texture* g_texture;
 
 void renderer_init() {
     g_running = true;
 
-    renderer_width = 1280;
-    renderer_height = 720;
+    g_renderer_width = 1280;
+    g_renderer_height = 720;
 
     SDL_Init(SDL_INIT_EVERYTHING);
-    g_window = SDL_CreateWindow(NULL, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, renderer_width, renderer_height, SDL_WINDOW_SHOWN);
+    g_window = SDL_CreateWindow(NULL, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, g_renderer_width, g_renderer_height, SDL_WINDOW_SHOWN);
     g_renderer = SDL_CreateRenderer(g_window, 0, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    g_texture = SDL_CreateTexture(g_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, renderer_width, renderer_height);
+    g_texture = SDL_CreateTexture(g_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, g_renderer_width, g_renderer_height);
 
-    g_framebuffer = (u32*) malloc(renderer_width * renderer_height * sizeof(u32));
+    g_framebuffer = (u32*) malloc(g_renderer_width * g_renderer_height * sizeof(u32));
 
     SDL_SetRenderDrawColor(g_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 }
 
 u32* renderer_get_framebuffer(u32* out_width, u32* out_height) {
-    if (out_width) *out_width = renderer_width;
-    if (out_height) *out_height = renderer_height;
+    if (out_width) *out_width = g_renderer_width;
+    if (out_height) *out_height = g_renderer_height;
 
     return g_framebuffer;
 }
@@ -49,7 +51,7 @@ void renderer_stop() {
 
 void renderer_render() {
     SDL_RenderClear(g_renderer);
-    SDL_UpdateTexture(g_texture, NULL, g_framebuffer, renderer_width * 4);
+    SDL_UpdateTexture(g_texture, NULL, g_framebuffer, g_renderer_width * 4);
     SDL_RenderCopy(g_renderer, g_texture, NULL, NULL);
     SDL_RenderPresent(g_renderer);
 }

@@ -30,6 +30,7 @@ Output file will be `gol`
 - `R`: Resume game
 - `A`: Randomize cells
 - `X`: Clear screen
+- `Y`: Speed up x5
 - `+`: Quit game
 
 - Press touch screen to revive cells.

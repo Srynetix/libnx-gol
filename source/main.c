@@ -3,11 +3,16 @@
 
 #include "gol.h"
 #include "renderer.h"
+#include "color.h"
 
-#define TICKS_PER_FRAME		    1
+#ifndef SWITCH
+#include <SDL2/SDL.h>
+#endif
+
+#define INITIAL_TICKS_PER_FRAME 1
 #define CELL_SIZE			    2
 #define INITIAL_CHANCE		    50
-#define ALIVE_COLOR			    RGBA8_MAXALPHA(200, 100, 50)
+#define ALIVE_COLOR			    RGBA8_MAXALPHA(200, 50, 150)
 #define SIMULATED_TOUCH_RADIUS  20
 
 int main(int argc, char **argv)
@@ -16,6 +21,7 @@ int main(int argc, char **argv)
 
     u32* framebuf;
     u32 width, height;
+    u32 ticks_per_frame = INITIAL_TICKS_PER_FRAME;
     gol_t* game = NULL;
 
 #ifndef SWITCH
@@ -36,6 +42,8 @@ int main(int argc, char **argv)
         hidScanInput();
 
         u32 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
+        u32 kUp = hidKeysUp(CONTROLLER_P1_AUTO);
+
         if (kDown & KEY_PLUS)
             break;
 
@@ -62,6 +70,14 @@ int main(int argc, char **argv)
         if (kDown & KEY_X) {
             gol_randomize(game, 0);
             gol_swap_buffers(game);            
+        }
+
+        // Speed up when pressing Y
+        if (kDown & KEY_Y) {
+            ticks_per_frame = INITIAL_TICKS_PER_FRAME * 5;
+        }
+        if (kUp & KEY_Y) {
+            ticks_per_frame = INITIAL_TICKS_PER_FRAME;
         }
 
         // Pause game when pressing L
@@ -117,12 +133,22 @@ int main(int argc, char **argv)
                     gol_randomize(game, 0);
                     gol_swap_buffers(game);
                 }
+
+                else if (event.key.keysym.scancode == SDL_SCANCODE_Y) {
+                    ticks_per_frame = INITIAL_TICKS_PER_FRAME * 5;
+                }
+            }
+
+            else if (event.type == SDL_KEYUP) {
+                if (event.key.keysym.scancode == SDL_SCANCODE_Y) {
+                    ticks_per_frame = INITIAL_TICKS_PER_FRAME;
+                }
             }
         }
 #endif
 
         // Step game
-        for (u32 i = 0; i < TICKS_PER_FRAME; ++i) {
+        for (u32 i = 0; i < ticks_per_frame; ++i) {
             gol_tick(game);
         }
 
