@@ -32,7 +32,7 @@ typedef struct gol_t {
     u32 cell_dead_color;
 
     /// Is the game stopped?
-    BOOL stopped;
+    bool stopped;
 } gol_t;
 
 

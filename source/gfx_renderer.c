@@ -6,10 +6,10 @@ u32 renderer_width;
 u32 renderer_height;
 
 u32* g_framebuffer;
-BOOL g_running;
+bool g_running;
 
 void renderer_init() {
-    g_running = TRUE;
+    g_running = true;
 
     renderer_width = 1280;
     renderer_height = 720;
@@ -31,7 +31,7 @@ u32 renderer_is_running() {
 }
 
 void renderer_stop() {
-    g_running = FALSE;
+    g_running = false;
 }
 
 void renderer_render() {

@@ -119,11 +119,11 @@ void gol_revive_cells_at_position(gol_t* game, u32 pos_x, u32 pos_y, u32 diam_x,
 }
 
 void gol_pause(gol_t* game) {
-    game->stopped = TRUE;
+    game->stopped = true;
 }
 
 void gol_resume(gol_t* game) {
-    game->stopped = FALSE;
+    game->stopped = false;
 }
 
 gol_t* gol_init(u32 grid_width, u32 grid_height, u32 cell_size, u32 initial_chance, u32 alive_color) {
@@ -142,7 +142,7 @@ gol_t* gol_init(u32 grid_width, u32 grid_height, u32 cell_size, u32 initial_chan
     game->front_buf = (u8*) malloc(sizeof(u8) * sz);
     game->life_buf = (u8*) malloc(sizeof(u8) * sz);
 
-    game->stopped = FALSE;
+    game->stopped = false;
     
     // Clear life buffer
     memset(game->life_buf, 0, sz * sizeof(u8));
@@ -161,7 +161,7 @@ void gol_randomize(gol_t* game, u8 chance) {
 }
 
 void gol_tick(gol_t* game) {
-    if (game->stopped == TRUE)
+    if (game->stopped)
         return;
 
     for (u32 idx = 0; idx < game->grid_sz; ++idx) {
