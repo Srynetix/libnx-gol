@@ -11,7 +11,28 @@ const s32 FONT[] = {
     0x0e949d27, // B
     0x0c908526, // C
     0x0e94a527, // D
-    0x0085e170  // E
+    0x1e10bc2f, // E
+    0x0210bc2f, // F
+    0x0c94b42e, // G
+    0x1294bd29, // H
+    0x08421084, // I
+    0x0c94210f, // J
+    0x12928ca9, // K
+    0x1e108421, // L
+    0x2318d771, // M
+    0x1294b569, // N
+    0x0c94a526, // O
+    0x0210bd2f, // P
+    0x2c9ac62e, // Q
+    0x12949d27, // R
+    0x1e843c2f, // S
+    0x0842108f, // T
+    0x0c94a529, // U
+    0x08a8c631, // V
+    0x155ac631, // W
+    0x22a22a31, // X
+    0x08422a31, // Y
+    0x1e11110f  // Z
 };
 
 u32 font_fn_get_char_data_idx(char c) {

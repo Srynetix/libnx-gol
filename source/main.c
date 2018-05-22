@@ -12,7 +12,7 @@
 
 #define INITIAL_TICKS_PER_FRAME 1
 #define CELL_SIZE			    2
-#define INITIAL_CHANCE		    50
+#define INITIAL_CHANCE		    10
 #define ALIVE_COLOR			    RGBA8_MAXALPHA(200, 50, 150)
 #define SIMULATED_TOUCH_RADIUS  20
 
@@ -153,10 +153,13 @@ int main(int argc, char **argv)
         gol_render(game, renderer);
 
         // Draw text
-        font_render("ABCD ABCD", renderer, 1, 32, 32, RGBA8_MAXALPHA(50, 100, 0));
-        font_render("ABCD ABCD", renderer, 2, 64, 64, RGBA8_MAXALPHA(100, 50, 0));
-        font_render("ABCD ABCD", renderer, 3, 96, 96, RGBA8_MAXALPHA(100, 100, 0));
-        font_render("ABCD ABCD", renderer, 4, 128, 128, RGBA8_MAXALPHA(50, 100, 50));
+        font_render("GAME OF LIFE", renderer, 3, 32, 32, RGBA8_MAXALPHA(200, 50, 50));
+        font_render("PRESS X TO CLEAR SCREEN", renderer, 2, 32, 96, RGBA8_MAXALPHA(255, 255, 255));
+        font_render("PRESS Y TO SPEED", renderer, 2, 32, 128, RGBA8_MAXALPHA(255, 255, 255));
+        font_render("PRESS L TO PAUSE", renderer, 2, 32, 160, RGBA8_MAXALPHA(255, 255, 255));
+        font_render("PRESS R TO RESUME", renderer, 2, 32, 192, RGBA8_MAXALPHA(255, 255, 255));
+        font_render("PRESS A TO RANDOMIZE", renderer, 2, 32, 224, RGBA8_MAXALPHA(255, 255, 255));
+        font_render("TOUCH SCREEN TO REVIVE CELLS", renderer, 2, 32, 256, RGBA8_MAXALPHA(255, 255, 255));
 
         // Render
         renderer_render(renderer);
