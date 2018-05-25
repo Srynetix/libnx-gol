@@ -1,12 +1,74 @@
-#include "font.h"
-
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-#define FONT_WIDTH  5
-#define FONT_HEIGHT 6
+#include "font.h"
+#include "utils.h"
+#include "color.h"
 
-const s32 FONT[] = {
+// Limits
+
+const s32 PUNCT_FIRST_MIN = 33;
+const s32 PUNCT_FIRST_MAX = 47;
+const s32 NUMBERS_MIN = 48;
+const s32 NUMBERS_MAX = 57;
+const s32 PUNCT_SECND_MIN = 58;
+const s32 PUNCT_SECND_MAX = 64;
+const s32 MAJ_LETTERS_MIN = 65;
+const s32 MAJ_LETTERS_MAX = 90;
+const s32 PUNCT_THIRD_MIN = 91;
+const s32 PUNCT_THIRD_MAX = 96;
+const s32 MIN_LETTERS_MIN = 97;
+const s32 MIN_LETTERS_MAX = 122;
+const s32 PUNCT_FOURT_MIN = 123;
+const s32 PUNCT_FOURT_MAX = 126;
+
+// 33 - 47
+const s32 PUNCT_FIRST[] = {
+    0x00000000, // !
+    0x00000000, // "
+    0x00000000, // #
+    0x00000000, // $
+    0x00000000, // %
+    0x00000000, // &
+    0x00000000, // '
+    0x00000000, // (
+    0x00000000, // )
+    0x00000000, // *
+    0x00023880, // +
+    0x00000000, // ,
+    0x00003800, // -
+    0x00000000, // .
+    0x00000000, // /
+};
+
+// 48 - 57
+const s32 NUMBERS[] = {
+    0x00000000, // 0
+    0x00000000, // 1
+    0x00000000, // 2
+    0x00000000, // 3
+    0x00000000, // 4
+    0x00000000, // 5
+    0x00000000, // 6
+    0x00000000, // 7
+    0x00000000, // 8
+    0x00000000  // 9
+};
+
+// 58 - 64
+const s32 PUNCT_SECND[] = {
+    0x00000000, // :
+    0x00000000, // ;
+    0x00000000, // <
+    0x00000000, // =
+    0x00000000, // >
+    0x00000000, // ?
+    0x00000000  // @
+};
+
+// 65 - 90
+const s32 MAJ_LETTERS[] = {
     0x1297a526, // A
     0x0e949d27, // B
     0x0c908526, // C
@@ -35,34 +97,100 @@ const s32 FONT[] = {
     0x1e11110f  // Z
 };
 
-u32 font_fn_get_char_data_idx(char c) {
-    char maj_min = 'A';
-    char maj_max = 'Z';
-    char min_min = 'a';
-    char min_max = 'z';
+// 91 - 96
+const s32 PUNCT_THIRD[] = {
+    0x00000000, // [
+    0x00000000, // <Backspace>
+    0x00000000, // ]
+    0x00000000, // ^
+    0x00000000, // _
+    0x00000000, // `
+};
 
-    // Maj
-    if (c >= maj_min && c <= maj_max) {
-        return c - maj_min;
+// 97 - 122
+const s32 MIN_LETTERS[] = {
+    0x00000000, // a
+    0x00000000, // b
+    0x00000000, // c
+    0x00000000, // d
+    0x00000000, // e
+    0x00000000, // f
+    0x00000000, // g
+    0x00000000, // h
+    0x00000000, // i
+    0x00000000, // j
+    0x00000000, // k
+    0x00000000, // l
+    0x00000000, // m
+    0x00000000, // n
+    0x00000000, // o
+    0x00000000, // p
+    0x00000000, // q
+    0x00000000, // r
+    0x00000000, // s
+    0x00000000, // t
+    0x00000000, // u
+    0x00000000, // v
+    0x00000000, // w
+    0x00000000, // x
+    0x00000000, // y
+    0x00000000  // z
+};
+
+// 123 - 126
+const s32 PUNCT_FOURT[] = {
+    0x00000000, // {
+    0x00000000, // |
+    0x00000000, // }
+    0x00000000  // ~
+};
+
+u32 font_fn_get_char_data(char c) {
+    // Punct first
+    if (c >= PUNCT_FIRST_MIN && c <= PUNCT_FIRST_MAX) {
+        return PUNCT_FIRST[c - PUNCT_FIRST_MIN];
     }
 
-    // Min
-    if (c >= min_min && c <= min_max) {
-        return 26 + c - min_min;
+    // Number
+    if (c >= NUMBERS_MIN && c <= NUMBERS_MAX) {
+        return NUMBERS[c - NUMBERS_MIN];
     }
 
-    return -1;
+    // Punct second
+    if (c >= PUNCT_SECND_MIN && c <= PUNCT_SECND_MAX) {
+        return PUNCT_SECND[c - PUNCT_SECND_MIN];
+    }
+
+    // Maj letter
+    if (c >= MAJ_LETTERS_MIN && c <= MAJ_LETTERS_MAX) {
+        return MAJ_LETTERS[c - MAJ_LETTERS_MIN];
+    }
+
+    // Punct third
+    if (c >= PUNCT_THIRD_MIN && c <= PUNCT_THIRD_MIN) {
+        return PUNCT_THIRD[c - PUNCT_THIRD_MIN];
+    }
+
+    // Min letter
+    if (c >= MIN_LETTERS_MIN && c <= MIN_LETTERS_MAX) {
+        return MIN_LETTERS[c - MIN_LETTERS_MIN];
+    }
+
+    // Punct fourth
+    if (c >= PUNCT_FOURT_MIN && c <= PUNCT_FOURT_MAX) {
+        return PUNCT_FOURT[c - PUNCT_FOURT_MIN];
+    }
+
+    return 0;
 }
 
-void font_fn_render_char(char c, renderer_t* renderer, u32 font_size, u32 pos_x, u32 pos_y, u32 color) {
+void font_render_char(char c, renderer_t* renderer, u32 font_size, u32 pos_x, u32 pos_y, color_t color) {
     u32* buf = renderer->framebuffer;
     u32 buf_width = renderer->width;
-    u32 data_idx = font_fn_get_char_data_idx(c);
+    u32 data = font_fn_get_char_data(c);
     
-    if (data_idx == -1)
+    if (data == 0)
         return;
-
-    u32 data = FONT[data_idx];
 
     for (u32 j = 0; j < FONT_HEIGHT * font_size; ++j) {
         for (u32 i = 0; i < FONT_WIDTH * font_size; ++i) {
@@ -71,17 +199,20 @@ void font_fn_render_char(char c, renderer_t* renderer, u32 font_size, u32 pos_x,
 
             u8 pxl = (data >> k) & 1;
             if (pxl == 1) {
-                buf[cell_idx] = color;
+                // Check for alpha blending
+                color_t existing_color = color_unpack(buf[cell_idx]);
+                color_t blended_color = color_alpha_blend(color, existing_color);
+                buf[cell_idx] = color_pack(blended_color);
             }
         }
     }
 }
 
-void font_render(const char* str, renderer_t* renderer, u32 font_size, u32 pos_x, u32 pos_y, u32 color) {
+void font_render(const char* str, renderer_t* renderer, u32 font_size, u32 pos_x, u32 pos_y, color_t color) {
     u32 str_len = strlen(str);
 
     for (u32 c = 0; c < str_len; ++c) {
         u32 curr_x = pos_x + (c * ((FONT_WIDTH * font_size) + (1 * font_size))); 
-        font_fn_render_char(str[c], renderer, font_size, curr_x, pos_y, color);
+        font_render_char(str[c], renderer, font_size, curr_x, pos_y, color);
     }
 }

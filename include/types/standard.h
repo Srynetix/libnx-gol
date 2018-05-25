@@ -1,5 +1,5 @@
-#ifndef GOL_TYPES_H
-#define GOL_TYPES_H
+#ifndef GOL_TYPES_STANDARD_H
+#define GOL_TYPES_STANDARD_H
 
 #ifdef SWITCH
     #include <switch.h>
@@ -33,4 +33,4 @@
     typedef volatile s128 vs128; ///< 128-bit volatile signed integer.
 #endif // SWITCH
 
-#endif // GOL_TYPES_H
+#endif // GOL_TYPES_STANDARD_H

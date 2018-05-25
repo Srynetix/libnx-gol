@@ -1,16 +1,8 @@
 #ifndef GOL_RENDERER_H
 #define GOL_RENDERER_H
 
-#include "types.h"
-
-typedef struct renderer_t {
-    u32* framebuffer;
-
-    u32 width;
-    u32 height;
-
-    bool running;
-} renderer_t;
+#include "types/standard.h"
+#include "types/renderer.h"
 
 renderer_t* renderer_init();
 

@@ -5,6 +5,7 @@
 #include "renderer.h"
 #include "color.h"
 #include "font.h"
+#include "font_effect.h"
 
 #ifndef SWITCH
 #include <SDL2/SDL.h>
@@ -23,6 +24,10 @@ int main(int argc, char **argv)
     u32 ticks_per_frame = INITIAL_TICKS_PER_FRAME;
     renderer_t* renderer = NULL;
     gol_t* game = NULL;
+    font_effect_t* fade_in_out_effect = font_effect_create(FONT_EFFECT_FADE_IN_OUT, 0, 4000);
+    
+    color_t title_color = color_unpack(RGBA8_MAXALPHA(200, 50, 50));
+    color_t text_color = color_unpack(RGBA8_MAXALPHA(255, 255, 255));
 
 #ifndef SWITCH
     bool clicked = false;
@@ -43,6 +48,9 @@ int main(int argc, char **argv)
 
         if (kDown & KEY_PLUS)
             renderer_stop(renderer);
+
+        if (kDown & KEY_UP)
+            font_effect_reset(fade_in_out_effect);
 
         // Detect touch and paint screen where screen is touched.
         touchPosition touch;
@@ -134,6 +142,10 @@ int main(int argc, char **argv)
                 else if (event.key.keysym.scancode == SDL_SCANCODE_Y) {
                     ticks_per_frame = INITIAL_TICKS_PER_FRAME * 5;
                 }
+
+                else if (event.key.keysym.scancode == SDL_SCANCODE_MINUS) {
+                    font_effect_reset(fade_in_out_effect);
+                }
             }
 
             else if (event.type == SDL_KEYUP) {
@@ -149,21 +161,27 @@ int main(int argc, char **argv)
             gol_tick(game);
         }
 
+        font_effect_tick(fade_in_out_effect, 16);
+
         // Render game
         gol_render(game, renderer);
 
         // Draw text
-        font_render("GAME OF LIFE", renderer, 3, 32, 32, RGBA8_MAXALPHA(200, 50, 50));
-        font_render("PRESS X TO CLEAR SCREEN", renderer, 2, 32, 96, RGBA8_MAXALPHA(255, 255, 255));
-        font_render("PRESS Y TO SPEED", renderer, 2, 32, 128, RGBA8_MAXALPHA(255, 255, 255));
-        font_render("PRESS L TO PAUSE", renderer, 2, 32, 160, RGBA8_MAXALPHA(255, 255, 255));
-        font_render("PRESS R TO RESUME", renderer, 2, 32, 192, RGBA8_MAXALPHA(255, 255, 255));
-        font_render("PRESS A TO RANDOMIZE", renderer, 2, 32, 224, RGBA8_MAXALPHA(255, 255, 255));
-        font_render("TOUCH SCREEN TO REVIVE CELLS", renderer, 2, 32, 256, RGBA8_MAXALPHA(255, 255, 255));
+        font_render_effect("GAME OF LIFE", renderer, 3, 32, 32, title_color, fade_in_out_effect);
+        font_render_effect("PRESS X TO CLEAR SCREEN", renderer, 2, 32, 96, text_color, fade_in_out_effect);
+        font_render_effect("PRESS Y TO SPEED", renderer, 2, 32, 128, text_color, fade_in_out_effect);
+        font_render_effect("PRESS L TO PAUSE", renderer, 2, 32, 160, text_color, fade_in_out_effect);
+        font_render_effect("PRESS R TO RESUME", renderer, 2, 32, 192, text_color, fade_in_out_effect);
+        font_render_effect("PRESS A TO RANDOMIZE", renderer, 2, 32, 224, text_color, fade_in_out_effect);
+        font_render_effect("PRESS + TO QUIT", renderer, 2, 32, 256, text_color, fade_in_out_effect);
+        font_render_effect("PRESS - TO SHOW THIS HELP", renderer, 2, 32, 256 + 32, text_color, fade_in_out_effect);
+        font_render_effect("TOUCH SCREEN TO REVIVE CELLS", renderer, 2, 32, 256 + 64, text_color, fade_in_out_effect);
 
         // Render
         renderer_render(renderer);
     }
+
+    font_effect_destroy(fade_in_out_effect);
 
     gol_shutdown(game);
 

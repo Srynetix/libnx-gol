@@ -34,5 +34,6 @@ Output file will be `gol`
 - `X`: Clear screen
 - `Y`: Speed up x5
 - `+`: Quit game
+- `-`: Show help
 
 - Press touch screen to revive cells.

@@ -1,8 +1,9 @@
-build
+/build
+/.vscode
 
-gol
-*.elf
-*.nacp
-*.nro
-*.nso
-*.pfs0
+/gol
+/*.elf
+/*.nacp
+/*.nro
+/*.nso
+/*.pfs0

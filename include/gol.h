@@ -1,8 +1,8 @@
 #ifndef GOL_H
 #define GOL_H
 
-#include "types.h"
-#include "renderer.h"
+#include "types/standard.h"
+#include "types/renderer.h"
 
 #define GOL_CELL_DEAD	0
 #define GOL_CELL_ALIVE	1
