@@ -45,7 +45,7 @@ typedef struct gol_t {
  * @param cell_size     Cell size
  * @param alive_color   Alive cell color
  * 
- * @return Game of Life instance
+ * @returns Game of Life instance
  */
 gol_t* gol_init(u32 grid_width, u32 grid_height, u32 cell_size, u32 initial_chance, u32 alive_color);
 
